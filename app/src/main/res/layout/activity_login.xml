@@ -68,5 +68,14 @@
             android:text="No account yet? Create one"
             android:textSize="16dip" />
 
+        <ProgressBar
+            android:id="@+id/login_progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:visibility="invisible"
+            />
+
     </LinearLayout>
 </ScrollView>

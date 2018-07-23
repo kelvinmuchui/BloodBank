@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,40 +21,48 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private static final String TAG = "LoginActivity";
+    private EditText loginEmailText;
+    private EditText loginPassText;
+    private Button loginBtn;
+    private TextView loginRegBtn;
 
-
-
-    private Button mLogin;
     private FirebaseAuth mAuth;
 
-    private EditText mEmail;
-    private EditText mPassword;
-
-    private TextView  mSiginUp;
+    private ProgressBar loginProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        //Intilalizing  widgets
-        mLogin = findViewById(R.id.btn_login);
-        mPassword = findViewById(R.id.input_password);
-        mEmail = findViewById(R.id.input_email);
-        mSiginUp = findViewById(R.id.link_signup);
 
+        mAuth = FirebaseAuth.getInstance();
 
-        // Login in user
+        loginEmailText = findViewById(R.id.input_email);
+        loginPassText = findViewById(R.id.input_password);
+        loginBtn = findViewById(R.id.btn_login);
+        loginRegBtn = findViewById(R.id.link_signup);
+        loginProgress = findViewById(R.id.login_progress);
 
-        mLogin.setOnClickListener(new View.OnClickListener() {
+        loginRegBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                String loginEmail = mEmail.getText().toString();
-                String loginPass = mPassword.getText().toString();
+                Intent regIntent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(regIntent);
+
+            }
+        });
+
+
+        loginBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String loginEmail = loginEmailText.getText().toString();
+                String loginPass = loginPassText.getText().toString();
 
                 if(!TextUtils.isEmpty(loginEmail) && !TextUtils.isEmpty(loginPass)){
-
+                    loginProgress.setVisibility(View.VISIBLE);
 
                     mAuth.signInWithEmailAndPassword(loginEmail, loginPass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
@@ -61,9 +70,7 @@ public class LoginActivity extends AppCompatActivity {
 
                             if(task.isSuccessful()){
 
-                                Intent mainIntent = new Intent(LoginActivity.this , MainActivity.class);
-                                startActivity(mainIntent);
-                                finish();
+                                sendToMain();
 
                             } else {
 
@@ -73,7 +80,7 @@ public class LoginActivity extends AppCompatActivity {
 
                             }
 
-
+                            loginProgress.setVisibility(View.INVISIBLE);
 
                         }
                     });
@@ -85,14 +92,28 @@ public class LoginActivity extends AppCompatActivity {
         });
 
 
-        // On link Sign up click
-        mSiginUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent regIntet = new Intent(LoginActivity.this, RegisterActivity.class);
-                startActivity(regIntet);
-                finish();
-            }
-        });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        if(currentUser != null){
+
+            sendToMain();
+
+        }
+
+
+    }
+
+    private void sendToMain() {
+
+        Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(mainIntent);
+        finish();
+
     }
 }
