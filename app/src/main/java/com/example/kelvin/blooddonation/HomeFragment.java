@@ -80,7 +80,7 @@ public class HomeFragment extends Fragment {
                 }
             });
 
-            Query firstQuery = firebaseFirestore.collection("Posts").orderBy("timestamp", Query.Direction.DESCENDING).limit(3);
+            Query firstQuery = firebaseFirestore.collection("Appeals").orderBy("timestamp", Query.Direction.DESCENDING).limit(3);
             firstQuery.addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
@@ -135,7 +135,7 @@ public class HomeFragment extends Fragment {
 
         if(firebaseAuth.getCurrentUser() != null) {
 
-            Query nextQuery = firebaseFirestore.collection("Posts")
+            Query nextQuery = firebaseFirestore.collection("Appeals")
                     .orderBy("timestamp", Query.Direction.DESCENDING)
                     .startAfter(lastVisible)
                     .limit(3);

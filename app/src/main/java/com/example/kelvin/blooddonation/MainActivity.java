@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         mainToolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(mainToolbar);
 
-        getSupportActionBar().setTitle("Blood Donation");
+        getSupportActionBar().setTitle("Appeals");
 
 
 
@@ -92,6 +93,16 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             });
+        addPostBtn = findViewById(R.id.add_post_btn);
+        addPostBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent newPostIntent = new Intent(MainActivity.this, NewAppealActivity.class);
+                startActivity(newPostIntent);
+
+            }
+        });
 
 
         }

@@ -49,7 +49,7 @@ public class SetupActivity extends AppCompatActivity {
 
     private boolean isChanged = false;
 
-    private EditText setupName;
+    private EditText setupName, setupPhone, setupBlood,setupWeight;
     private Button setupBtn;
    private ProgressBar setupProgress;
 
@@ -77,6 +77,9 @@ public class SetupActivity extends AppCompatActivity {
 
         setupImage = findViewById(R.id.setup_image);
         setupName = findViewById(R.id.setup_name);
+        setupPhone = findViewById(R.id.setup_phonenumber);
+        setupBlood = findViewById(R.id.setup_bloodgroup);
+        setupWeight = findViewById(R.id.setup_weight);
         setupBtn = findViewById(R.id.setup_btn);
         setupProgress = findViewById(R.id.setup_progress);
 
@@ -93,10 +96,19 @@ public class SetupActivity extends AppCompatActivity {
 
                         String name = task.getResult().getString("name");
                         String image = task.getResult().getString("image");
+                        String phoneNumber = task.getResult().getString("phonenumber");
+                        String blood = task.getResult().getString("blood");
+                        String weight = task.getResult().getString("weight");
+
+
+
 
                         mainImageURI = Uri.parse(image);
 
                         setupName.setText(name);
+                        setupPhone.setText(phoneNumber);
+                        setupBlood.setText(blood);
+                        setupWeight.setText(weight);
 
                         RequestOptions placeholderRequest = new RequestOptions();
                         placeholderRequest.placeholder(R.drawable.default_avata);
@@ -125,8 +137,15 @@ public class SetupActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 final String user_name = setupName.getText().toString();
+                final String phone_number = setupPhone.getText().toString();
+                final String blood_group  = setupBlood.getText().toString();
+                final String weight = setupWeight.getText().toString();
 
-                if (!TextUtils.isEmpty(user_name) && mainImageURI != null) {
+
+
+
+                if (!TextUtils.isEmpty(user_name) && !TextUtils.isEmpty(phone_number)&&!TextUtils.isEmpty(blood_group)&&
+                        !TextUtils.isEmpty(weight)&&mainImageURI != null) {
 
                     setupProgress.setVisibility(View.VISIBLE);
 
@@ -158,7 +177,7 @@ public class SetupActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
 
                                 if (task.isSuccessful()) {
-                                    storeFirestore(task, user_name);
+                                    storeFirestore(task, user_name,phone_number,blood_group,weight);
 
                                 } else {
 
@@ -173,7 +192,7 @@ public class SetupActivity extends AppCompatActivity {
 
                     } else {
 
-                        storeFirestore(null, user_name);
+                        storeFirestore(null, user_name,phone_number,blood_group,weight);
 
                     }
 
@@ -213,7 +232,8 @@ public class SetupActivity extends AppCompatActivity {
 
     }
 
-    private void storeFirestore(@NonNull Task<UploadTask.TaskSnapshot> task, String user_name) {
+    private void storeFirestore(@NonNull Task<UploadTask.TaskSnapshot> task, String user_name, String phone_number, String blood_group
+    , String weight) {
 
         Uri download_uri;
 
@@ -228,6 +248,12 @@ public class SetupActivity extends AppCompatActivity {
 
         Map<String, String> userMap = new HashMap<>();
         userMap.put("name", user_name);
+        userMap.put("phone_number", phone_number);
+        userMap.put("blood_group",blood_group );
+        userMap.put("weight", weight);
+
+
+
         userMap.put("image", download_uri.toString());
 
         firebaseFirestore.collection("Users").document(user_id).set(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {

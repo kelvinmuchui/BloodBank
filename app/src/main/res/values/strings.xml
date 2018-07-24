@@ -16,4 +16,6 @@
     <string name="field_email">email</string>
     <string name="setup_btn_name_text">Name</string>
     <string name="setup_name_hint_text">Enter  username</string>
+    <string name="post_desc_hint">Type Appeal</string>
+    <string name="new_post_btn_hint">Post Appeal</string>
 </resources>
