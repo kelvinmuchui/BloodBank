@@ -133,16 +133,16 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
             }
         });
 
-//        holder.blogCommentBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                Intent commentIntent = new Intent(context, CommentsActivity.class);
-//                commentIntent.putExtra("blog_post_id", blogPostId);
-//                context.startActivity(commentIntent);
-//
-//            }
-//        });
+        holder.btnrespond.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent commentIntent = new Intent(context, RespondActivity.class);
+                commentIntent.putExtra("blog_post_id", blogPostId);
+                context.startActivity(commentIntent);
+
+            }
+        });
 
     }
 

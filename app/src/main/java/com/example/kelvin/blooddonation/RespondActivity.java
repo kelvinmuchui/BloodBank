@@ -1,5 +1,6 @@
 package com.example.kelvin.blooddonation;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -44,6 +46,7 @@ public class RespondActivity extends AppCompatActivity {
 
     private String blog_post_id;
     private String current_user_id;
+    private Button btnLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +66,7 @@ public class RespondActivity extends AppCompatActivity {
         responds_field = findViewById(R.id.comment_field);
         responds_post_btn = findViewById(R.id.respond_post_btn);
         respond_list = findViewById(R.id.respond_list);
+        btnLocation = findViewById(R.id.btn_map);
 
         //RecyclerView Firebase List
         respondsList = new ArrayList<>();
@@ -70,6 +74,15 @@ public class RespondActivity extends AppCompatActivity {
         respond_list.setHasFixedSize(true);
         respond_list.setLayoutManager(new LinearLayoutManager(this));
         respond_list.setAdapter(respondRecyclerAdapter);
+
+        btnLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent mapIntent = new Intent(RespondActivity.this, MapActivity.class);
+                startActivity(mapIntent);
+
+            }
+        });
 
 
         firebaseFirestore.collection("Posts/" + blog_post_id + "/Responds")

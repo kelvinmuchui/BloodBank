@@ -1,5 +1,9 @@
 package com.example.kelvin.blooddonation;
 
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +28,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
 
     private Toolbar mainToolbar;
     private FirebaseAuth mAuth;
@@ -32,82 +38,78 @@ public class MainActivity extends AppCompatActivity {
 
     private FloatingActionButton addPostBtn;
 
-    private BottomNavigationView mainbottomNav;
-
-    private HomeFragment homeFragment;
-    private NotificationFragment notificationFragment;
-    private AccountFragment accountFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-       mAuth = FirebaseAuth.getInstance();
-       firebaseFirestore = FirebaseFirestore.getInstance();
-
         mainToolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(mainToolbar);
 
-        getSupportActionBar().setTitle("Appeals");
+        getSupportActionBar().setTitle("Appeal");
+        mAuth = FirebaseAuth.getInstance();
+        firebaseFirestore = FirebaseFirestore.getInstance();
 
+        // load the store fragment by default
+        mainToolbar.setTitle("Appeal");
+        loadFragment(new HomeFragment());
 
+        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-            mainbottomNav = findViewById(R.id.mainBottomNav);
-
-            // FRAGMENTS
-            homeFragment = new HomeFragment();
-            notificationFragment = new NotificationFragment();
-            accountFragment = new AccountFragment();
-
-            initializeFragment();
-
-            mainbottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+        addPostBtn = findViewById(R.id.add_post_btn);
+            addPostBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                public void onClick(View v) {
 
-                    Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
-
-                    switch (item.getItemId()) {
-
-                        case R.id.navigation_home:
-
-                            replaceFragment(homeFragment, currentFragment);
-                            return true;
-
-                        case R.id.navigation_dashboard:
-
-                            replaceFragment(accountFragment, currentFragment);
-                            return true;
-
-                        case R.id.navigation_notifications:
-
-                            replaceFragment(notificationFragment, currentFragment);
-                            return true;
-
-                        default:
-                            return false;
-
-
-                    }
+                    Intent newPostIntent = new Intent(MainActivity.this, NewAppealActivity.class);
+                    startActivity(newPostIntent);
 
                 }
             });
-        addPostBtn = findViewById(R.id.add_post_btn);
-        addPostBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                Intent newPostIntent = new Intent(MainActivity.this, NewAppealActivity.class);
-                startActivity(newPostIntent);
+
+
+    }
+
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            Fragment fragment;
+            switch (item.getItemId()) {
+                case R.id.navigation_home:
+
+                    fragment = new HomeFragment();
+                    loadFragment(fragment);
+                    return true;
+                case R.id.nav_prorile:
+                    mainToolbar.setTitle("Profile");
+                    fragment = new AccountFragment();
+                    loadFragment(fragment);
+                    return true;
+                case R.id.nav_notification:
+                    mainToolbar.setTitle("Notification");
+                    fragment = new NotificationFragment();
+                    loadFragment(fragment);
+                    return true;
 
             }
-        });
-
-
+            return false;
         }
+    };
 
-    @Override
+    private void loadFragment(Fragment fragment) {
+        // load fragment
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.main_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+        @Override
     protected void onStart() {
         super.onStart();
 
@@ -164,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
 
             case R.id.action_logout_btn:
-                sendToLogin() ;
+                logOut();
                 return true;
 
             case R.id.action_settings_btn:
@@ -183,10 +185,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void logOut() {
+        private void logOut() {
 
 
-
+        mAuth.signOut();
+        sendToLogin();
     }
 
     private void sendToLogin() {
@@ -196,50 +199,4 @@ public class MainActivity extends AppCompatActivity {
         finish();
 
     }
-
-    private void initializeFragment(){
-
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-
-        fragmentTransaction.add(R.id.main_container, homeFragment);
-        fragmentTransaction.add(R.id.main_container, notificationFragment);
-        fragmentTransaction.add(R.id.main_container, accountFragment);
-
-        fragmentTransaction.hide(notificationFragment);
-        fragmentTransaction.hide(accountFragment);
-
-        fragmentTransaction.commit();
-
-    }
-
-    private void replaceFragment(Fragment fragment, Fragment currentFragment){
-
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        if(fragment == homeFragment){
-
-            fragmentTransaction.hide(accountFragment);
-            fragmentTransaction.hide(notificationFragment);
-
-        }
-
-        if(fragment == accountFragment){
-
-            fragmentTransaction.hide(homeFragment);
-            fragmentTransaction.hide(notificationFragment);
-
-        }
-
-        if(fragment == notificationFragment){
-
-            fragmentTransaction.hide(homeFragment);
-            fragmentTransaction.hide(accountFragment);
-
-        }
-        fragmentTransaction.show(fragment);
-
-        //fragmentTransaction.replace(R.id.main_container, fragment);
-        fragmentTransaction.commit();
-
-    }
-
 }
