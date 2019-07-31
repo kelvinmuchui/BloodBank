@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 case R.id.nav_prorile:
                     mainToolbar.setTitle("Profile");
-                    fragment = new AccountFragment();
+                    fragment = new MapFragment();
                     loadFragment(fragment);
                     return true;
                 case R.id.nav_notification:

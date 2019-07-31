@@ -14,5 +14,5 @@
         android:title="@string/action_logout_text" />
     <item
         android:id="@+id/userprofile"
-        android:title="Profile" />
+        android:title="Map" />
 </menu>
